@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Post</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #fafafa;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Create Post</h2>
+
+<input type="text" id="image_url" placeholder="Image URL"><br>
+<input type="text" id="caption" placeholder="Caption"><br>
+
+<button onclick="createPost()">Post</button>
+<button onclick="goHome()">Back</button>
+
+<script>
+const token = localStorage.getItem("token");
+
+if (!token) {
+    alert("Please login first");
+    window.location.href = "login.html";
+}
+
+function createPost() {
+    const image_url = document.getElementById("image_url").value;
+    const caption = document.getElementById("caption").value;
+
+    fetch("http://127.0.0.1:5000/post", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            image_url: image_url,
+            caption: caption
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+    alert("Post created successfully");
+    window.location.href = "home.html";
+    });
+}
+
+function goHome() {
+    window.location.href = "home.html";
+}
+</script>
+
+</body>
+</html>
+

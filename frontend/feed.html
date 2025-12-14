@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Feed</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2 style="text-align:center;">Feed</h2>
+<div id="feed"></div>
+
+<script>
+fetch("http://127.0.0.1:5000/feed", {
+  headers: {
+    Authorization: "Bearer " + localStorage.getItem("token")
+  }
+})
+.then(res => res.json())
+.then(posts => {
+  posts.forEach(p => {
+    document.getElementById("feed").innerHTML += `
+      <div class="post">
+        <img src="${p.image_url}" width="100%"><br>
+        <p>${p.caption}</p>
+      </div>
+    `;
+  });
+});
+</script>
+
+</body>
+</html>

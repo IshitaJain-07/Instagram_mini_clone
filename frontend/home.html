@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Home</title>
+</head>
+<body>
+
+<input id="search" placeholder="Search user">
+<button onclick="search()">Search</button>
+<div id="users"></div>
+
+<hr>
+<div id="feed"></div>
+
+<script>
+const token = localStorage.getItem("token");
+if (!token) location.href = "login.html";
+
+function search() {
+    const q = document.getElementById("search").value;
+    fetch(`http://127.0.0.1:5000/users/search?q=${q}`, {
+        headers: { Authorization: "Bearer " + token }
+    })
+    .then(r => r.json())
+    .then(users => {
+        document.getElementById("users").innerHTML =
+            users.map(u =>
+                `<p><a href="profile.html?username=${u.username}">${u.username}</a></p>`
+            ).join("");
+    });
+}
+
+function loadFeed() {
+    fetch("http://127.0.0.1:5000/feed", {
+        headers: { Authorization: "Bearer " + token }
+    })
+    .then(r => r.json())
+    .then(posts => {
+        document.getElementById("feed").innerHTML =
+            posts.map(p => `
+                <img src="${p.image_url}" width="300">
+                <p>${p.caption}</p>
+                <p>Likes: ${p.likes}</p>
+            `).join("");
+    });
+}
+
+loadFeed();
+</script>
+</body>
+</html>
+
+
+

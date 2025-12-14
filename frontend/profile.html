@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+</head>
+<body>
+
+<h2 id="username"></h2>
+
+<button id="followBtn" onclick="follow()">Follow</button>
+<button id="unfollowBtn" onclick="unfollow()">Unfollow</button>
+
+<br><br>
+<button onclick="goBack()">Back</button>
+
+<script>
+const token = localStorage.getItem("token");
+if (!token) {
+    window.location.href = "login.html";
+}
+
+const params = new URLSearchParams(window.location.search);
+const username = params.get("username");
+
+document.getElementById("username").innerText = username;
+
+let userId = null;
+
+fetch(`http://127.0.0.1:5000/user/${username}`, {
+    headers: {
+        "Authorization": "Bearer " + token
+    }
+})
+.then(res => res.json())
+.then(data => {
+    userId = data.id;
+
+    if (data.is_self) {
+        document.getElementById("followBtn").style.display = "none";
+        document.getElementById("unfollowBtn").style.display = "none";
+    }
+
+    if (data.is_following) {
+        document.getElementById("followBtn").style.display = "none";
+    } else {
+        document.getElementById("unfollowBtn").style.display = "none";
+    }
+});
+
+function follow() {
+    fetch(`http://127.0.0.1:5000/follow/${userId}`, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(() => location.reload());
+}
+
+function unfollow() {
+    fetch(`http://127.0.0.1:5000/unfollow/${userId}`, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    }).then(() => location.reload());
+}
+
+function goBack() {
+    window.location.href = "home.html";
+}
+</script>
+
+</body>
+</html>
